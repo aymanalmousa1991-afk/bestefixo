@@ -1,0 +1,82 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Brand colors derived from Beste Fixo logo */
+    --brand-blue: 213 71% 39%;        /* #1E5DAA */
+    --brand-blue-dark: 213 75% 28%;   /* #14407A */
+    --brand-green: 88 53% 50%;        /* #7AB845 */
+    --brand-green-light: 88 53% 60%;
+
+    --background: 0 0% 100%;
+    --foreground: 215 28% 17%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 215 28% 17%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 215 28% 17%;
+
+    --primary: 213 71% 39%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 88 53% 50%;
+    --secondary-foreground: 0 0% 100%;
+
+    --muted: 210 40% 96%;
+    --muted-foreground: 215 16% 47%;
+
+    --accent: 88 53% 95%;
+    --accent-foreground: 213 71% 25%;
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 214 32% 91%;
+    --input: 214 32% 91%;
+    --ring: 213 71% 39%;
+
+    --radius: 0.75rem;
+  }
+
+  * { @apply border-border; }
+  html { scroll-behavior: smooth; }
+  body { @apply bg-background text-foreground; font-feature-settings: 'rlig' 1, 'calt' 1; }
+}
+
+@layer utilities {
+  .font-display { font-family: var(--font-playfair), serif; }
+  .text-balance { text-wrap: balance; }
+  .bg-grid {
+    background-image:
+      linear-gradient(to right, rgba(30,93,170,0.06) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(30,93,170,0.06) 1px, transparent 1px);
+    background-size: 32px 32px;
+  }
+  .gradient-brand {
+    background: linear-gradient(135deg, #1E5DAA 0%, #14407A 100%);
+  }
+  .gradient-fresh {
+    background: linear-gradient(135deg, #1E5DAA 0%, #7AB845 100%);
+  }
+  .text-gradient-brand {
+    background: linear-gradient(135deg, #1E5DAA 0%, #7AB845 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .shadow-premium {
+    box-shadow: 0 10px 40px -10px rgba(30, 93, 170, 0.25), 0 4px 12px -4px rgba(30, 93, 170, 0.1);
+  }
+  .shadow-soft {
+    box-shadow: 0 4px 24px -8px rgba(30, 93, 170, 0.15);
+  }
+}
+
+/* Smooth scrollbar */
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: hsl(var(--muted)); }
+::-webkit-scrollbar-thumb { background: hsl(var(--brand-blue)); border-radius: 8px; }
+::-webkit-scrollbar-thumb:hover { background: hsl(var(--brand-blue-dark)); }

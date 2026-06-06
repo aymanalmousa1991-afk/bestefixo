@@ -8,7 +8,13 @@ const nextConfig = {
   experimental: {
     serverComponentsExternalPackages: ['mongodb'],
   },
-  webpack(config, { dev }) {
+  // Geen build cache om grote bestanden te voorkomen op Cloudflare Pages
+  generateBuildId: () => 'build-' + Date.now(),
+  webpack(config, { dev, isServer }) {
+    // Geen cache in productie — Cloudflare heeft 25MB limiet
+    if (!dev) {
+      config.cache = false;
+    }
     if (dev) {
       config.watchOptions = {
         poll: 2000,
@@ -16,11 +22,6 @@ const nextConfig = {
         ignored: ['**/node_modules'],
       };
     }
-    // Splits grote chunks zodat Cloudflare's 25MB limiet niet overschreden wordt
-    config.optimization.splitChunks = {
-      chunks: 'all',
-      maxSize: 20 * 1024 * 1024, // 20MB per chunk
-    };
     return config;
   },
   async headers() {

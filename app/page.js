@@ -26,6 +26,8 @@ import { SITE, NAV_LINKS, FAQS, SEED_TESTIMONIALS } from '@/lib/config/site'
 import { SERVICES } from '@/lib/config/services'
 import { PROJECTS } from '@/lib/config/projects'
 
+const API_BASE = typeof process !== 'undefined' && process.env && process.env.NEXT_PUBLIC_API_URL ? process.env.NEXT_PUBLIC_API_URL : '';
+
 const { brand, contact } = SITE
 
 const HERO_IMG = '/projects/kantoorruimte.jpeg'
@@ -437,7 +439,7 @@ function ReviewForm({ onSubmitted }) {
     }
     setLoading(true)
     try {
-      const res = await fetch((process.env.NEXT_PUBLIC_API_URL || '') + '/api/reviews', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(form) })
+      const res = await fetch(API_BASE + '/api/reviews', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(form) })
       const data = await res.json()
       if (!res.ok) throw new Error(data.error || 'Er ging iets mis')
       toast.success(data.message || 'Bedankt voor uw review!')
@@ -573,7 +575,7 @@ function Reviews() {
 
   useEffect(() => {
     let alive = true
-    fetch((process.env.NEXT_PUBLIC_API_URL || '') + '/api/reviews?limit=50')
+    fetch(API_BASE + '/api/reviews?limit=50')
       .then((r) => r.json())
       .then((data) => {
         if (!alive) return
@@ -650,7 +652,7 @@ function QuoteForm() {
     }
     setLoading(true)
     try {
-      const res = await fetch((process.env.NEXT_PUBLIC_API_URL || '') + '/api/quote', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(form) })
+      const res = await fetch(API_BASE + '/api/quote', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(form) })
       const data = await res.json()
       if (!res.ok) throw new Error(data.error || 'Er ging iets mis')
       toast.success(data.message || 'Bedankt voor uw aanvraag!')
@@ -763,7 +765,7 @@ function Contact() {
     }
     setLoading(true)
     try {
-      const res = await fetch((process.env.NEXT_PUBLIC_API_URL || '') + '/api/contact', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(form) })
+      const res = await fetch(API_BASE + '/api/contact', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(form) })
       const data = await res.json()
       if (!res.ok) throw new Error(data.error || 'Er ging iets mis')
       toast.success(data.message || 'Bedankt voor uw bericht!')

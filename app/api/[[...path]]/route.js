@@ -7,6 +7,17 @@ function json(data, status = 200) {
   return NextResponse.json(data, { status })
 }
 
+// Safely parse JSON body — works around Next.js catch-all route body parsing issues
+async function getBody(request) {
+  try {
+    const clone = request.clone ? request.clone() : request
+    const text = await clone.text()
+    return text ? JSON.parse(text) : {}
+  } catch (e) {
+    return null
+  }
+}
+
 async function handler(request, { params }) {
   const path = params?.path?.join('/') || ''
   const method = request.method
@@ -19,7 +30,8 @@ async function handler(request, { params }) {
 
     // ---------- QUOTES ----------
     if (path === 'quote' && method === 'POST') {
-      const body = await request.json()
+      const body = await getBody(request)
+      if (!body) return json({ error: 'Ongeldig JSON-formaat in aanvraag.' }, 400)
       const { name, company, email, phone, serviceType, location, message } = body || {}
       if (!name || !email || !phone || !serviceType) {
         return json({ error: 'Verplichte velden ontbreken: naam, e-mail, telefoon en type schoonmaak.' }, 400)
@@ -40,7 +52,7 @@ async function handler(request, { params }) {
       await db.collection(collections.quotes).insertOne(doc)
       // Future: notification email
       sendMail({
-        to: process.env.MAIL_TO || 'info@bestefixo.nl',
+        to: process.env.MAIL_TO || 'bestefixo@gmail.com',
         subject: `Nieuwe offerte aanvraag van ${doc.name}`,
         html: `<h2>Nieuwe offerte aanvraag</h2><pre>${JSON.stringify(doc, null, 2)}</pre>`,
         text: `Nieuwe offerte aanvraag\n${JSON.stringify(doc, null, 2)}`,
@@ -50,8 +62,9 @@ async function handler(request, { params }) {
     }
 
     // ---------- CONTACT ----------
-    if (path === 'contact' && method === 'POST') {
-      const body = await request.json()
+        if (path === 'contact' && method === 'POST') {
+      const body = await getBody(request)
+      if (!body) return json({ error: 'Ongeldig JSON-formaat in aanvraag.' }, 400)
       const { name, email, phone, message } = body || {}
       if (!name || !email || !message) {
         return json({ error: 'Verplichte velden ontbreken: naam, e-mail en bericht.' }, 400)
@@ -68,7 +81,7 @@ async function handler(request, { params }) {
       }
       await db.collection(collections.contacts).insertOne(doc)
       sendMail({
-        to: process.env.MAIL_TO || 'info@bestefixo.nl',
+        to: process.env.MAIL_TO || 'bestefixo@gmail.com',
         subject: `Nieuw contactbericht van ${doc.name}`,
         html: `<h2>Nieuw contactbericht</h2><pre>${JSON.stringify(doc, null, 2)}</pre>`,
         text: `Nieuw contactbericht\n${JSON.stringify(doc, null, 2)}`,
@@ -91,8 +104,9 @@ async function handler(request, { params }) {
       return json({ reviews })
     }
 
-    if (path === 'reviews' && method === 'POST') {
-      const body = await request.json()
+        if (path === 'reviews' && method === 'POST') {
+      const body = await getBody(request)
+      if (!body) return json({ error: 'Ongeldig JSON-formaat in aanvraag.' }, 400)
       const { name, role, rating, text } = body || {}
       const ratingNum = Number(rating)
       if (!name || !text || !ratingNum || ratingNum < 1 || ratingNum > 5) {

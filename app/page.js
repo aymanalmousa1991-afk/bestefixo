@@ -9,6 +9,7 @@ import {
   ShieldCheck, Sparkles, Leaf, Award, CheckCircle2, Send,
   ChevronRight, ChevronLeft, BadgeCheck, Users, ThumbsUp,
   ClipboardList, CalendarCheck2, Smile, PencilLine,
+  Calendar, ArrowUpRight, Image as ImageIcon,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -23,14 +24,16 @@ import { toast } from 'sonner'
 import { BrandLogo } from '@/components/brand-logo'
 import { SITE, NAV_LINKS, FAQS, SEED_TESTIMONIALS } from '@/lib/config/site'
 import { SERVICES } from '@/lib/config/services'
+import { PROJECTS } from '@/lib/config/projects'
 
 const { brand, contact } = SITE
 
-const HERO_IMG = 'https://images.pexels.com/photos/6195949/pexels-photo-6195949.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=900&w=1400'
-const TEAM_IMG = 'https://images.pexels.com/photos/14431051/pexels-photo-14431051.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=900&w=900'
+const HERO_IMG = '/projects/kantoorruimte.jpeg'
+const TEAM_IMG = '/projects/kantoorruimte.jpeg'
+
 
 const reasons = [
-  { icon: ShieldCheck, title: 'Betrouwbaar', desc: 'Verzekerde, gescreende medewerkers en heldere afspraken — altijd.' },
+  { icon: ShieldCheck, title: 'Betrouwbaar', desc: 'Verzekerde, gescreende medewerkers en heldere afspraken  altijd.' },
   { icon: Award, title: 'Premium Kwaliteit', desc: 'Aandacht voor detail en hoogwaardige, milieubewuste middelen.' },
   { icon: Sparkles, title: 'Brandschoon Resultaat', desc: 'Wij stoppen pas als het écht schoon is. Tevredenheidsgarantie.' },
   { icon: Leaf, title: 'Milieuvriendelijk', desc: 'Duurzame producten en methodes voor een gezonde leefomgeving.' },
@@ -149,7 +152,7 @@ function Hero({ onQuoteClick }) {
             </Button>
           </motion.div>
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.7, duration: 0.8 }} className="mt-8 sm:mt-10 flex flex-wrap items-center gap-x-6 gap-y-3 text-white/90">
-            <div className="flex items-center gap-2"><div className="flex">{[...Array(5)].map((_, i) => <Star key={i} className="h-4 w-4 fill-yellow-400 text-yellow-400" />)}</div><span className="text-sm">{SITE.rating.value} / 5 — {SITE.rating.count} reviews</span></div>
+            <div className="flex items-center gap-2"><div className="flex">{[...Array(5)].map((_, i) => <Star key={i} className="h-4 w-4 fill-yellow-400 text-yellow-400" />)}</div><span className="text-sm">{SITE.rating.value} / 5 &mdash; {SITE.rating.count} reviews</span></div>
             <div className="flex items-center gap-2 text-sm"><ShieldCheck className="h-5 w-5 text-brand-green-light" /> Verzekerd & gecertificeerd</div>
             <div className="flex items-center gap-2 text-sm"><BadgeCheck className="h-5 w-5 text-brand-green-light" /> 100% Tevredenheidsgarantie</div>
           </motion.div>
@@ -237,7 +240,7 @@ function About() {
           <div className="absolute -bottom-4 -right-4 sm:-bottom-6 sm:-right-6 bg-white rounded-2xl p-4 sm:p-5 shadow-premium flex items-center gap-3 sm:gap-4">
             <div className="h-12 w-12 sm:h-14 sm:w-14 rounded-xl gradient-fresh flex items-center justify-center shrink-0"><Award className="h-6 w-6 sm:h-7 sm:w-7 text-white" /></div>
             <div>
-              <div className="font-display text-xl sm:text-2xl font-bold text-brand-blue leading-none">10+ jaar</div>
+              <div className="font-display text-xl sm:text-2xl font-bold text-brand-blue leading-none">6+ jaar</div>
               <div className="text-[11px] sm:text-xs text-muted-foreground mt-1">vakmanschap & ervaring</div>
             </div>
           </div>
@@ -251,7 +254,7 @@ function About() {
           <div className="grid sm:grid-cols-2 gap-4 sm:gap-5 my-6 sm:my-7">
             <div className="rounded-2xl border border-border/60 p-5 bg-card">
               <div className="font-display font-bold text-brand-blue text-lg mb-1">Onze Missie</div>
-              <p className="text-sm text-muted-foreground">Een brandschone, gezonde leefomgeving creëren voor iedere klant — met betrouwbare service en zichtbaar resultaat.</p>
+              <p className="text-sm text-muted-foreground">Een brandschone, gezonde leefomgeving creëren voor iedere klant  met betrouwbare service en zichtbaar resultaat.</p>
             </div>
             <div className="rounded-2xl border border-border/60 p-5 bg-card">
               <div className="font-display font-bold text-brand-blue text-lg mb-1">Onze Visie</div>
@@ -307,7 +310,7 @@ function ServiceCarousel({ images, title, autoplayDelay = 4000, offset = 0 }) {
 /* ---------- SERVICES ---------- */
 function Services({ onQuoteClick }) {
   return (
-    <Section id="diensten" eyebrow="Onze Diensten" title="Compleet aanbod voor élke schoonmaakvraag" subtitle="Van dagelijks onderhoud tot diepgaande reinigingen — wij hebben de juiste dienst voor uw situatie." className="bg-muted/30">
+    <Section id="diensten" eyebrow="Onze Diensten" title="Compleet aanbod voor elke schoonmaakvraag" subtitle="Van dagelijks onderhoud tot diepgaande reinigingen  wij hebben de juiste dienst voor uw situatie." className="bg-muted/30">
       <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5 sm:gap-6">
         {SERVICES.map((s, i) => (
           <motion.div key={s.slug} custom={i} initial="hidden" whileInView="show" viewport={{ once: true, amount: 0.05 }} variants={fadeUp}>
@@ -348,8 +351,8 @@ function ServiceDetailDialog({ service, onQuoteClick }) {
       <DialogTrigger asChild>
         <Button variant="outline" size="sm" className="flex-1 border-brand-blue/30 text-brand-blue hover:bg-brand-blue hover:text-white">Meer info</Button>
       </DialogTrigger>
-      <DialogContent className="max-w-3xl p-0 overflow-hidden max-h-[92vh] overflow-y-auto">
-        <div className="relative aspect-[16/9]">
+            <DialogContent className="max-w-3xl p-0 max-h-[92vh] overflow-y-auto">
+        <div className="relative aspect-[16/9] w-full overflow-hidden">
           <ServiceCarousel images={service.images} title={service.title} autoplayDelay={3500} />
         </div>
         <div className="p-6 sm:p-8">
@@ -381,7 +384,7 @@ function ServiceDetailDialog({ service, onQuoteClick }) {
 /* ---------- PROCESS ---------- */
 function Process() {
   return (
-    <Section id="werkproces" eyebrow="Onze Werkwijze" title="Zo werken wij — eenvoudig en helder" subtitle="In vier overzichtelijke stappen van eerste contact tot brandschoon resultaat.">
+    <Section id="werkproces" eyebrow="Onze Werkwijze" title="Zo werken wij  eenvoudig en helder" subtitle="In vier overzichtelijke stappen van eerste contact tot brandschoon resultaat.">
       <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8 relative">
         <div className="hidden lg:block absolute top-10 left-[12.5%] right-[12.5%] h-0.5 bg-gradient-to-r from-brand-blue via-brand-green to-brand-blue opacity-30" />
         {steps.map((s, i) => (
@@ -476,6 +479,90 @@ function ReviewForm({ onSubmitted }) {
         </form>
       </CardContent>
     </Card>
+    )
+}
+
+/* ---------- PROJECTS ---------- */
+function Projects() {
+  const [selectedId, setSelectedId] = useState(null)
+
+  return (
+    <Section id="projecten" eyebrow="Onze Projecten" title="Laatste schoonmaakprojecten" subtitle="Bekijk enkele van onze voltooide projecten  van kantoorschoonmaak tot vakantieparken.">
+      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
+        {PROJECTS.map((project) => (
+          <motion.div
+            key={project.slug}
+            layout
+            className="group relative bg-white rounded-2xl overflow-hidden border border-border/40 shadow-sm hover:shadow-lg transition-all duration-300 cursor-pointer"
+            onClick={() => setSelectedId(selectedId === project.slug ? null : project.slug)}
+          >
+            {/* Image */}
+            <div className="relative h-48 sm:h-56 overflow-hidden">
+              <Image
+                src={project.images[0].src}
+                alt={project.images[0].alt}
+                fill
+                className="object-cover transition-transform duration-500 group-hover:scale-105"
+                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
+              <div className="absolute bottom-3 left-3 right-3 flex items-center gap-2 text-white text-xs">
+                <MapPin className="h-3 w-3" />
+                <span>{project.location}</span>
+                <span className="ml-auto flex items-center gap-1">
+                  <Calendar className="h-3 w-3" />
+                  {project.date}
+                </span>
+              </div>
+            </div>
+
+            {/* Content */}
+            <div className="p-4 sm:p-5">
+              <h3 className="font-display font-semibold text-base sm:text-lg text-brand-blue-dark group-hover:text-brand-blue transition-colors">
+                {project.title}
+              </h3>
+              <p className="text-sm text-muted-foreground mt-1.5 line-clamp-2">
+                {project.description}
+              </p>
+
+              {/* Expanded details */}
+              <AnimatePresence>
+                {selectedId === project.slug && (
+                  <motion.div
+                    initial={{ height: 0, opacity: 0 }}
+                    animate={{ height: 'auto', opacity: 1 }}
+                    exit={{ height: 0, opacity: 0 }}
+                    transition={{ duration: 0.3 }}
+                    className="overflow-hidden"
+                  >
+                    <div className="pt-3 mt-3 border-t border-border/40">
+                      <p className="text-sm text-muted-foreground mb-3">{project.description}</p>
+                      {/* Extra images */}
+                      {project.images.length > 1 && (
+                        <div className="grid grid-cols-2 gap-2 mb-3">
+                          {project.images.slice(1).map((img, i) => (
+                            <div key={i} className="relative h-20 rounded-lg overflow-hidden">
+                              <Image src={img.src} alt={img.alt} fill className="object-cover" sizes="50vw" />
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                      <a
+                        href={project.link}
+                        className="inline-flex items-center gap-1.5 text-sm font-medium text-brand-green hover:text-brand-green-dark transition-colors"
+                      >
+                        Bekijk meer foto&apos;s
+                        <ArrowUpRight className="h-3.5 w-3.5" />
+                      </a>
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
+          </motion.div>
+        ))}
+      </div>
+    </Section>
   )
 }
 
@@ -691,7 +778,7 @@ function Contact() {
         <motion.div initial="hidden" whileInView="show" viewport={{ once: true }} variants={fadeUp} className="max-w-3xl mx-auto text-center mb-10 sm:mb-14">
           <div className="inline-flex items-center gap-2 rounded-full bg-accent px-3 sm:px-4 py-1.5 text-[10px] sm:text-xs font-semibold uppercase tracking-wider text-brand-blue mb-3 sm:mb-4"><Sparkles className="h-3.5 w-3.5" /> Contact</div>
           <h2 className="font-display text-3xl sm:text-4xl lg:text-5xl font-bold text-balance leading-tight">We helpen u graag verder</h2>
-          <p className="mt-3 sm:mt-4 text-base sm:text-lg text-muted-foreground">Heeft u een vraag of wilt u meer informatie? Neem direct contact met ons op — wij zijn er voor u.</p>
+          <p className="mt-3 sm:mt-4 text-base sm:text-lg text-muted-foreground">Heeft u een vraag of wilt u meer informatie? Neem direct contact met ons op  wij zijn er voor u.</p>
         </motion.div>
         <div className="grid lg:grid-cols-2 gap-8 lg:gap-10">
           <Card className="border-border/60 shadow-soft">
@@ -795,7 +882,7 @@ function Footer() {
           </div>
         </div>
         <div className="border-t border-white/10 pt-6 flex flex-col sm:flex-row justify-between items-center gap-3 text-sm text-white/60">
-          <div>© {new Date().getFullYear()} BesteFixo Schoonmaak. Alle rechten voorbehouden.</div>
+          <div> {new Date().getFullYear()} BesteFixo Schoonmaak. Alle rechten voorbehouden.</div>
           <div className="flex gap-5"><a href="#" className="hover:text-white">Privacy</a><a href="#" className="hover:text-white">Algemene voorwaarden</a></div>
         </div>
       </div>
@@ -872,6 +959,7 @@ function App() {
       <About />
       <Services onQuoteClick={scrollToQuote} />
       <Process />
+      <Projects />
       <Reviews />
       <QuoteForm />
       <FAQ />
@@ -885,3 +973,4 @@ function App() {
 }
 
 export default App
+

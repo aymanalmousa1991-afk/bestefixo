@@ -437,7 +437,7 @@ function ReviewForm({ onSubmitted }) {
     }
     setLoading(true)
     try {
-      const res = await fetch('/api/reviews', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(form) })
+      const res = await fetch((process.env.NEXT_PUBLIC_API_URL || '') + '/api/reviews'), { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(form) })
       const data = await res.json()
       if (!res.ok) throw new Error(data.error || 'Er ging iets mis')
       toast.success(data.message || 'Bedankt voor uw review!')
@@ -573,7 +573,7 @@ function Reviews() {
 
   useEffect(() => {
     let alive = true
-    fetch('/api/reviews?limit=50')
+    fetch((process.env.NEXT_PUBLIC_API_URL || '') + '/api/reviews?limit=50')
       .then((r) => r.json())
       .then((data) => {
         if (!alive) return
@@ -650,7 +650,7 @@ function QuoteForm() {
     }
     setLoading(true)
     try {
-      const res = await fetch('/api/quote', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(form) })
+      const res = await fetch((process.env.NEXT_PUBLIC_API_URL || '') + '/api/quote'), { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(form) })
       const data = await res.json()
       if (!res.ok) throw new Error(data.error || 'Er ging iets mis')
       toast.success(data.message || 'Bedankt voor uw aanvraag!')
@@ -763,7 +763,7 @@ function Contact() {
     }
     setLoading(true)
     try {
-      const res = await fetch('/api/contact', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(form) })
+      const res = await fetch((process.env.NEXT_PUBLIC_API_URL || '') + '/api/contact'), { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(form) })
       const data = await res.json()
       if (!res.ok) throw new Error(data.error || 'Er ging iets mis')
       toast.success(data.message || 'Bedankt voor uw bericht!')

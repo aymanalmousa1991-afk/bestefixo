@@ -890,8 +890,8 @@ function Footer() {
             </div>
           </div>
         </div>
-        <div className="border-t border-white/10 pt-6 flex flex-col sm:flex-row justify-between items-center gap-3 text-sm text-white/60">
-          <div> {new Date().getFullYear()} BesteFixo Schoonmaak. Alle rechten voorbehouden.</div>
+                <div className="border-t border-white/10 pt-6 flex flex-col sm:flex-row justify-between items-center gap-3 text-sm text-white/60">
+          <div> &copy; {new Date().getFullYear()} BesteFixo Schoonmaak. KVK: {contact.kvk}. Alle rechten voorbehouden.</div>
           <div className="flex gap-5"><a href="#" className="hover:text-white">Privacy</a><a href="#" className="hover:text-white">Algemene voorwaarden</a></div>
         </div>
       </div>

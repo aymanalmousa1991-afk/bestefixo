@@ -105,6 +105,14 @@ export default function RootLayout({ children }) {
             `,
           }}
         />
+        {/* Event snippet voor Leadformulier indienen */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              gtag('event', 'conversion', {'send_to': 'AW-18270211960/bYIaCLiXyMYcEPie9YdE'});
+            `,
+          }}
+        />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(localBusinessSchema) }}

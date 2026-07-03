@@ -69,6 +69,42 @@ export default function RootLayout({ children }) {
     <html lang="nl" className={`${inter.variable} ${playfair.variable}`}>
       <head>
         <link rel="icon" href={SITE.brand.logoUrl} />
+        {/* Google Consent Mode — standaard uit voor EER, aanpasbaar met cookiebanner */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              window.dataLayer = window.dataLayer || [];
+              function gtag(){dataLayer.push(arguments);}
+              gtag('consent', 'default', {
+                'ad_storage': 'denied',
+                'ad_user_data': 'denied',
+                'ad_personalization': 'denied',
+                'analytics_storage': 'denied',
+                'functionality_storage': 'granted',
+                'personalization_storage': 'denied',
+                'security_storage': 'granted',
+                'wait_for_update': 500,
+              });
+              gtag('set', 'ads_data_redaction', true);
+              gtag('set', 'url_passthrough', true);
+            `,
+          }}
+        />
+        {/* Google tag (gtag.js) voor conversiemeting */}
+        <script
+          async
+          src="https://www.googletagmanager.com/gtag/js?id=AW-18270211960"
+        />
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              window.dataLayer = window.dataLayer || [];
+              function gtag(){dataLayer.push(arguments);}
+              gtag('js', new Date());
+              gtag('config', 'AW-18270211960');
+            `,
+          }}
+        />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(localBusinessSchema) }}
@@ -81,3 +117,4 @@ export default function RootLayout({ children }) {
     </html>
   )
 }
+

@@ -4,6 +4,7 @@ const nextConfig = {
     unoptimized: true,
     remotePatterns: [
       { protocol: 'https', hostname: 'avatars.githubusercontent.com', pathname: '/**' },
+      { protocol: 'https', hostname: 'www.googletagmanager.com', pathname: '/**' },
     ],
   },
   experimental: {
@@ -26,3 +27,4 @@ const nextConfig = {
 };
 
 module.exports = nextConfig;
+

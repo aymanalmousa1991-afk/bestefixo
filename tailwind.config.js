@@ -27,8 +27,10 @@ module.exports = {
         brand: {
           blue: '#1E5DAA',
           'blue-dark': '#14407A',
-          green: '#7AB845',
-          'green-light': '#A0CE6B',
+          // Accessible forest green (~5.4:1 on white) — replaces the original
+          // #7AB845 lime, which read as ~2.4:1 and failed AA on white CTA text.
+          green: '#4E7524',
+          'green-light': '#93BE6A',
         },
         primary: {
           DEFAULT: 'hsl(var(--primary))',

@@ -28,6 +28,7 @@ export const metadata = {
   },
   icons: { icon: SITE.brand.logoUrl, shortcut: SITE.brand.logoUrl, apple: SITE.brand.logoUrl },
   robots: { index: true, follow: true },
+  alternates: { canonical: '/' },
 }
 
 export const viewport = {

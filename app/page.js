@@ -2,14 +2,14 @@
 
 import { useEffect, useRef, useState, useCallback } from 'react'
 import Image from 'next/image'
-import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion'
+import { motion, AnimatePresence, useScroll, useTransform, useReducedMotion } from 'framer-motion'
 import useEmblaCarousel from 'embla-carousel-react'
 import {
-  Phone, Mail, MapPin, Clock, MessageCircle, ArrowUp, Menu, Star,
+  Phone, Mail, MapPin, Clock, MessageCircle, Star,
   ShieldCheck, Sparkles, Leaf, Award, CheckCircle2, Send,
-  ChevronRight, ChevronLeft, BadgeCheck, Users, ThumbsUp,
+  ChevronRight, BadgeCheck, Users, ThumbsUp,
   ClipboardList, CalendarCheck2, Smile, PencilLine,
-  Calendar, ArrowUpRight, Image as ImageIcon,
+  Calendar, ArrowUpRight, ChevronDown,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -18,14 +18,19 @@ import { Label } from '@/components/ui/label'
 import { Card, CardContent } from '@/components/ui/card'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion'
-import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription } from '@/components/ui/dialog'
 import { toast } from 'sonner'
+import { Navbar } from '@/components/navbar'
+import { Footer } from '@/components/footer'
+import { FloatingButtons, MobileCtaBar } from '@/components/floating-buttons'
+import { CookieBanner } from '@/components/cookie-banner'
+import { Section, fadeUp } from '@/components/section'
+import { StatsBar } from '@/components/stats-bar'
+import { Wordmark } from '@/components/wordmark'
 import { BrandLogo } from '@/components/brand-logo'
-import { SITE, NAV_LINKS, FAQS, SEED_TESTIMONIALS } from '@/lib/config/site'
+import { SITE, FAQS, SEED_TESTIMONIALS } from '@/lib/config/site'
 import { SERVICES } from '@/lib/config/services'
 import { PROJECTS } from '@/lib/config/projects'
-import { apiFetch } from '@/lib/api'
 
 const { brand, contact } = SITE
 
@@ -49,81 +54,14 @@ const steps = [
   { icon: Smile, title: 'Brandschoon', desc: 'U geniet van een spierwit resultaat met tevredenheidsgarantie.' },
 ]
 
-const fadeUp = {
-  hidden: { opacity: 0, y: 30 },
-  show: (i = 0) => ({ opacity: 1, y: 0, transition: { duration: 0.6, delay: i * 0.08, ease: 'easeOut' } }),
-}
-
-/* ---------- WORDMARK ---------- */
-function Wordmark({ size = 'md', className = '' }) {
-  const sizes = { sm: 'text-lg', md: 'text-xl', lg: 'text-2xl', xl: 'text-3xl' }
-  return (
-    <span className={`font-display font-bold tracking-tight ${sizes[size]} ${className}`}>
-      <span className="text-brand-blue">Beste</span><span className="text-brand-green">Fixo</span>
-    </span>
-  )
-}
-
-/* ---------- NAVBAR ---------- */
-function Navbar({ onQuoteClick }) {
-  const [scrolled, setScrolled] = useState(false)
-  const [open, setOpen] = useState(false)
-  useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 20)
-    onScroll(); window.addEventListener('scroll', onScroll)
-    return () => window.removeEventListener('scroll', onScroll)
-  }, [])
-  return (
-    <header className={`fixed top-0 inset-x-0 z-50 transition-all duration-300 ${scrolled ? 'bg-white/95 backdrop-blur shadow-soft py-1.5' : 'bg-white/80 backdrop-blur-sm py-2.5'}`}>
-      <div className="container flex items-center justify-between gap-3">
-        <a href="#home" className="flex items-center gap-2 sm:gap-3 min-w-0" aria-label={`${brand.fullName} Home`}>
-          <BrandLogo size={scrolled ? 44 : 52} priority />
-          <div className="flex flex-col leading-tight min-w-0">
-            <Wordmark size="md" className="truncate" />
-            <span className="text-[9px] sm:text-[10px] tracking-[0.28em] uppercase text-muted-foreground font-semibold">{brand.tagline}</span>
-          </div>
-        </a>
-        <nav className="hidden lg:flex items-center gap-1">
-          {NAV_LINKS.map((l) => (
-            <a key={l.href} href={l.href} className="px-3 py-2 text-sm font-medium text-foreground/80 hover:text-brand-blue transition-colors relative group">
-              {l.label}
-              <span className="absolute left-3 right-3 -bottom-0.5 h-0.5 bg-brand-green scale-x-0 group-hover:scale-x-100 transition-transform origin-left" />
-            </a>
-          ))}
-        </nav>
-        <div className="hidden lg:flex items-center gap-3">
-          <Button onClick={onQuoteClick} className="bg-brand-green hover:bg-brand-green/90 text-white shadow-soft">
-            Vraag Offerte Aan
-          </Button>
-        </div>
-        <Sheet open={open} onOpenChange={setOpen}>
-          <SheetTrigger asChild className="lg:hidden">
-            <Button variant="ghost" size="icon" aria-label="Menu"><Menu className="h-6 w-6" /></Button>
-          </SheetTrigger>
-          <SheetContent side="right" className="w-[88vw] sm:w-[360px] flex flex-col">
-            <div className="flex items-center gap-3 mt-2 mb-4 pb-4 border-b">
-              <BrandLogo size={44} />
-              <Wordmark />
-            </div>
-            <nav className="flex flex-col">
-              {NAV_LINKS.map((l) => (
-                <a key={l.href} href={l.href} onClick={() => setOpen(false)} className="px-2 py-3 text-base font-medium border-b hover:text-brand-blue">{l.label}</a>
-              ))}
-            </nav>
-            <a href={`tel:${contact.phoneRaw}`} className="mt-5 flex items-center gap-2 text-brand-blue font-semibold"><Phone className="h-4 w-4"/>{contact.phone}</a>
-            <Button onClick={() => { setOpen(false); onQuoteClick() }} className="mt-3 bg-brand-green hover:bg-brand-green/90 text-white">Vraag Offerte Aan</Button>
-          </SheetContent>
-        </Sheet>
-      </div>
-    </header>
-  )
-}
 
 /* ---------- HERO ---------- */
 function Hero({ onQuoteClick }) {
   const ref = useRef(null)
+  const reduceMotion = useReducedMotion()
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start start', 'end start'] })
-  const y = useTransform(scrollYProgress, [0, 1], [0, 100])
+  const yRaw = useTransform(scrollYProgress, [0, 1], [0, 100])
+  const y = reduceMotion ? 0 : yRaw
   return (
     <section id="home" ref={ref} className="relative min-h-[100svh] flex items-center pt-28 sm:pt-32 pb-12 overflow-hidden">
       <motion.div style={{ y }} className="absolute inset-0">
@@ -176,23 +114,14 @@ function Hero({ onQuoteClick }) {
           </div>
         </motion.div>
       </div>
+      <a
+        href="#waarom"
+        aria-label="Scroll naar volgende sectie"
+        className="hidden sm:flex absolute bottom-6 left-1/2 -translate-x-1/2 z-10 h-9 w-9 rounded-full border border-white/40 items-center justify-center text-white/80 hover:text-white hover:border-white transition-colors motion-safe:animate-float"
+      >
+        <ChevronDown className="h-4 w-4" aria-hidden="true" />
+      </a>
       <div className="absolute bottom-0 inset-x-0 h-20 bg-gradient-to-t from-background to-transparent z-10" />
-    </section>
-  )
-}
-
-/* ---------- SECTION WRAPPER ---------- */
-function Section({ id, eyebrow, title, subtitle, children, className = '' }) {
-  return (
-    <section id={id} className={`py-16 sm:py-20 lg:py-28 ${className}`}>
-      <div className="container">
-        <motion.div initial="hidden" whileInView="show" viewport={{ once: true, amount: 0.2 }} variants={fadeUp} className="max-w-3xl mx-auto text-center mb-10 sm:mb-14">
-          {eyebrow && <div className="inline-flex items-center gap-2 rounded-full bg-accent px-3 sm:px-4 py-1.5 text-[10px] sm:text-xs font-semibold uppercase tracking-wider text-brand-blue mb-3 sm:mb-4"><Sparkles className="h-3.5 w-3.5" /> {eyebrow}</div>}
-          <h2 className="font-display text-3xl sm:text-4xl lg:text-5xl font-bold text-foreground text-balance leading-tight">{title}</h2>
-          {subtitle && <p className="mt-3 sm:mt-4 text-base sm:text-lg text-muted-foreground">{subtitle}</p>}
-        </motion.div>
-        {children}
-      </div>
     </section>
   )
 }
@@ -404,21 +333,25 @@ function Process() {
 function StarInput({ value, onChange }) {
   const [hover, setHover] = useState(0)
   return (
-    <div className="flex gap-1" onMouseLeave={() => setHover(0)}>
+    <div role="radiogroup" aria-label="Beoordeling in sterren" className="flex gap-1" onMouseLeave={() => setHover(0)}>
       {[1, 2, 3, 4, 5].map((i) => (
         <button
           key={i}
           type="button"
+          role="radio"
+          aria-checked={value === i}
           onClick={() => onChange(i)}
           onMouseEnter={() => setHover(i)}
-          aria-label={`${i} sterren`}
-          className="p-0.5 transition-transform hover:scale-110"
+          aria-label={`${i} ${i === 1 ? 'ster' : 'sterren'}`}
+          className="p-1.5 -m-1 transition-transform hover:scale-110 focus-visible:scale-110 rounded"
         >
           <Star
             className={`h-7 w-7 transition-colors ${(hover || value) >= i ? 'fill-yellow-400 text-yellow-400' : 'fill-transparent text-muted-foreground/40'}`}
+            aria-hidden="true"
           />
         </button>
       ))}
+      <span className="sr-only" aria-live="polite">{value ? `${value} van 5 sterren geselecteerd` : 'Geen beoordeling geselecteerd'}</span>
     </div>
   )
 }
@@ -452,7 +385,7 @@ function ReviewForm({ onSubmitted }) {
           <PencilLine className="h-5 w-5 text-brand-blue" />
           <h3 className="font-display text-xl font-bold">Schrijf een review</h3>
         </div>
-        <form onSubmit={submit} className="space-y-3">
+        <form onSubmit={submit} noValidate className="space-y-3">
           <div className="grid sm:grid-cols-2 gap-3">
             <div>
               <Label htmlFor="r-name">Naam *</Label>
@@ -491,8 +424,18 @@ function Projects() {
           <motion.div
             key={project.slug}
             layout
-            className="group relative bg-white rounded-2xl overflow-hidden border border-border/40 shadow-sm hover:shadow-lg transition-all duration-300 cursor-pointer"
+            role="button"
+            tabIndex={0}
+            aria-expanded={selectedId === project.slug}
+            aria-controls={`project-details-${project.slug}`}
+            className="group relative bg-white rounded-2xl overflow-hidden border border-border/40 shadow-sm hover:shadow-lg focus-visible:shadow-lg transition-all duration-300 cursor-pointer"
             onClick={() => setSelectedId(selectedId === project.slug ? null : project.slug)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault()
+                setSelectedId(selectedId === project.slug ? null : project.slug)
+              }
+            }}
           >
             {/* Image */}
             <div className="relative h-48 sm:h-56 overflow-hidden">
@@ -527,6 +470,7 @@ function Projects() {
               <AnimatePresence>
                 {selectedId === project.slug && (
                   <motion.div
+                    id={`project-details-${project.slug}`}
                     initial={{ height: 0, opacity: 0 }}
                     animate={{ height: 'auto', opacity: 1 }}
                     exit={{ height: 0, opacity: 0 }}
@@ -537,7 +481,7 @@ function Projects() {
                       <p className="text-sm text-muted-foreground mb-3">{project.description}</p>
                       {/* Extra images */}
                       {project.images.length > 1 && (
-                        <div className="grid grid-cols-2 gap-2 mb-3">
+                        <div className="grid grid-cols-2 gap-2">
                           {project.images.slice(1).map((img, i) => (
                             <div key={i} className="relative h-20 rounded-lg overflow-hidden">
                               <Image src={img.src} alt={img.alt} fill className="object-cover" sizes="50vw" />
@@ -545,17 +489,14 @@ function Projects() {
                           ))}
                         </div>
                       )}
-                      <a
-                        href={project.link}
-                        className="inline-flex items-center gap-1.5 text-sm font-medium text-brand-green hover:text-brand-green-dark transition-colors"
-                      >
-                        Bekijk meer foto&apos;s
-                        <ArrowUpRight className="h-3.5 w-3.5" />
-                      </a>
                     </div>
                   </motion.div>
                 )}
               </AnimatePresence>
+              <span className="inline-flex items-center gap-1 mt-2 text-xs font-medium text-brand-green">
+                {selectedId === project.slug ? 'Minder tonen' : 'Meer bekijken'}
+                <ArrowUpRight className={`h-3 w-3 transition-transform ${selectedId === project.slug ? 'rotate-[135deg]' : ''}`} aria-hidden="true" />
+              </span>
             </div>
           </motion.div>
         ))}
@@ -639,11 +580,25 @@ function Reviews() {
 function QuoteForm() {
   const [loading, setLoading] = useState(false)
   const [form, setForm] = useState({ name: '', company: '', email: '', phone: '', serviceType: '', location: '', message: '' })
+  const [errors, setErrors] = useState({})
   const update = (k, v) => setForm((f) => ({ ...f, [k]: v }))
+  const validate = () => {
+    const next = {}
+    if (!form.name.trim()) next.name = 'Vul uw naam in.'
+    if (!form.email.trim()) next.email = 'Vul uw e-mailadres in.'
+    else if (!/^\S+@\S+\.\S+$/.test(form.email)) next.email = 'Vul een geldig e-mailadres in.'
+    if (!form.phone.trim()) next.phone = 'Vul uw telefoonnummer in.'
+    if (!form.serviceType) next.serviceType = 'Kies een dienst.'
+    return next
+  }
   const submit = async (e) => {
     e.preventDefault()
-    if (!form.name || !form.email || !form.phone || !form.serviceType) {
-      toast.error('Vul alstublieft alle verplichte velden in.')
+    const next = validate()
+    setErrors(next)
+    if (Object.keys(next).length > 0) {
+      toast.error('Controleer de gemarkeerde velden hieronder.')
+      const firstField = ['name', 'email', 'phone', 'serviceType'].find((k) => next[k])
+      document.getElementById(firstField)?.focus()
       return
     }
     setLoading(true)
@@ -653,10 +608,12 @@ function QuoteForm() {
       if (!res.ok) throw new Error(data.error || 'Er ging iets mis')
       toast.success(data.message || 'Bedankt voor uw aanvraag!')
       setForm({ name: '', company: '', email: '', phone: '', serviceType: '', location: '', message: '' })
+      setErrors({})
     } catch (err) {
       toast.error(err.message || 'Er ging iets mis. Probeer het opnieuw.')
     } finally { setLoading(false) }
   }
+  const errorClass = (field) => (errors[field] ? 'border-destructive focus-visible:ring-destructive' : '')
   return (
     <section id="offerte" className="py-16 sm:py-20 lg:py-28 bg-muted/30">
       <div className="container grid lg:grid-cols-5 gap-10 lg:gap-12">
@@ -680,10 +637,11 @@ function QuoteForm() {
         <div className="lg:col-span-3">
           <Card className="shadow-premium border-border/60">
             <CardContent className="p-5 sm:p-7 lg:p-8">
-              <form onSubmit={submit} className="grid sm:grid-cols-2 gap-4">
+              <form onSubmit={submit} noValidate className="grid sm:grid-cols-2 gap-4">
                 <div className="sm:col-span-1">
                   <Label htmlFor="name">Naam *</Label>
-                  <Input id="name" value={form.name} onChange={(e) => update('name', e.target.value)} placeholder="Uw volledige naam" className="mt-1.5" required />
+                  <Input id="name" value={form.name} onChange={(e) => update('name', e.target.value)} placeholder="Uw volledige naam" className={`mt-1.5 ${errorClass('name')}`} aria-invalid={!!errors.name} aria-describedby={errors.name ? 'name-error' : undefined} required />
+                  {errors.name && <p id="name-error" role="alert" className="text-xs text-destructive mt-1">{errors.name}</p>}
                 </div>
                 <div className="sm:col-span-1">
                   <Label htmlFor="company">Bedrijfsnaam</Label>
@@ -691,21 +649,24 @@ function QuoteForm() {
                 </div>
                 <div>
                   <Label htmlFor="email">E-mail *</Label>
-                  <Input id="email" type="email" value={form.email} onChange={(e) => update('email', e.target.value)} placeholder="naam@email.nl" className="mt-1.5" required />
+                  <Input id="email" type="email" value={form.email} onChange={(e) => update('email', e.target.value)} placeholder="naam@email.nl" className={`mt-1.5 ${errorClass('email')}`} aria-invalid={!!errors.email} aria-describedby={errors.email ? 'email-error' : undefined} required />
+                  {errors.email && <p id="email-error" role="alert" className="text-xs text-destructive mt-1">{errors.email}</p>}
                 </div>
                 <div>
                   <Label htmlFor="phone">Telefoonnummer *</Label>
-                  <Input id="phone" type="tel" value={form.phone} onChange={(e) => update('phone', e.target.value)} placeholder="06 12 34 56 78" className="mt-1.5" required />
+                  <Input id="phone" type="tel" value={form.phone} onChange={(e) => update('phone', e.target.value)} placeholder="06 12 34 56 78" className={`mt-1.5 ${errorClass('phone')}`} aria-invalid={!!errors.phone} aria-describedby={errors.phone ? 'phone-error' : undefined} required />
+                  {errors.phone && <p id="phone-error" role="alert" className="text-xs text-destructive mt-1">{errors.phone}</p>}
                 </div>
                 <div>
                   <Label htmlFor="serviceType">Type schoonmaak *</Label>
                   <Select value={form.serviceType} onValueChange={(v) => update('serviceType', v)}>
-                    <SelectTrigger id="serviceType" className="mt-1.5"><SelectValue placeholder="Kies een dienst" /></SelectTrigger>
+                    <SelectTrigger id="serviceType" className={`mt-1.5 ${errorClass('serviceType')}`} aria-invalid={!!errors.serviceType} aria-describedby={errors.serviceType ? 'serviceType-error' : undefined}><SelectValue placeholder="Kies een dienst" /></SelectTrigger>
                     <SelectContent>
                       {SERVICES.map((s) => <SelectItem key={s.slug} value={s.title}>{s.title}</SelectItem>)}
                       <SelectItem value="Anders / Maatwerk">Anders / Maatwerk</SelectItem>
                     </SelectContent>
                   </Select>
+                  {errors.serviceType && <p id="serviceType-error" role="alert" className="text-xs text-destructive mt-1">{errors.serviceType}</p>}
                 </div>
                 <div>
                   <Label htmlFor="location">Locatie</Label>
@@ -732,8 +693,18 @@ function QuoteForm() {
 
 /* ---------- FAQ ---------- */
 function FAQ() {
+  const faqSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: FAQS.map((f) => ({
+      '@type': 'Question',
+      name: f.q,
+      acceptedAnswer: { '@type': 'Answer', text: f.a },
+    })),
+  }
   return (
     <Section id="faq" eyebrow="Veelgestelde Vragen" title="Antwoorden op uw vragen" subtitle="Vindt u geen antwoord op uw vraag? Neem gerust contact met ons op.">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
       <div className="max-w-3xl mx-auto">
         <Accordion type="single" collapsible className="space-y-3">
           {FAQS.map((f, i) => (
@@ -752,11 +723,24 @@ function FAQ() {
 function Contact() {
   const [loading, setLoading] = useState(false)
   const [form, setForm] = useState({ name: '', email: '', phone: '', message: '' })
+  const [errors, setErrors] = useState({})
   const update = (k, v) => setForm((f) => ({ ...f, [k]: v }))
+  const validate = () => {
+    const next = {}
+    if (!form.name.trim()) next.name = 'Vul uw naam in.'
+    if (!form.email.trim()) next.email = 'Vul uw e-mailadres in.'
+    else if (!/^\S+@\S+\.\S+$/.test(form.email)) next.email = 'Vul een geldig e-mailadres in.'
+    if (!form.message.trim()) next.message = 'Vul uw bericht in.'
+    return next
+  }
   const submit = async (e) => {
     e.preventDefault()
-    if (!form.name || !form.email || !form.message) {
-      toast.error('Vul uw naam, e-mail en bericht in.')
+    const next = validate()
+    setErrors(next)
+    if (Object.keys(next).length > 0) {
+      toast.error('Controleer de gemarkeerde velden hieronder.')
+      const firstField = ['c-name', 'c-email', 'c-msg'].find((id, i) => next[['name', 'email', 'message'][i]])
+      document.getElementById(firstField)?.focus()
       return
     }
     setLoading(true)
@@ -766,10 +750,12 @@ function Contact() {
       if (!res.ok) throw new Error(data.error || 'Er ging iets mis')
       toast.success(data.message || 'Bedankt voor uw bericht!')
       setForm({ name: '', email: '', phone: '', message: '' })
+      setErrors({})
     } catch (err) {
       toast.error(err.message || 'Er ging iets mis.')
     } finally { setLoading(false) }
   }
+  const errorClass = (field) => (errors[field] ? 'border-destructive focus-visible:ring-destructive' : '')
   return (
     <section id="contact" className="py-16 sm:py-20 lg:py-28 bg-muted/30">
       <div className="container">
@@ -782,13 +768,25 @@ function Contact() {
           <Card className="border-border/60 shadow-soft">
             <CardContent className="p-5 sm:p-7 lg:p-8">
               <h3 className="font-display text-xl sm:text-2xl font-bold mb-5 sm:mb-6">Stuur ons een bericht</h3>
-              <form onSubmit={submit} className="space-y-4">
+              <form onSubmit={submit} noValidate className="space-y-4">
                 <div className="grid sm:grid-cols-2 gap-4">
-                  <div><Label htmlFor="c-name">Naam *</Label><Input id="c-name" required value={form.name} onChange={(e) => update('name', e.target.value)} className="mt-1.5" /></div>
+                  <div>
+                    <Label htmlFor="c-name">Naam *</Label>
+                    <Input id="c-name" required value={form.name} onChange={(e) => update('name', e.target.value)} className={`mt-1.5 ${errorClass('name')}`} aria-invalid={!!errors.name} aria-describedby={errors.name ? 'c-name-error' : undefined} />
+                    {errors.name && <p id="c-name-error" role="alert" className="text-xs text-destructive mt-1">{errors.name}</p>}
+                  </div>
                   <div><Label htmlFor="c-phone">Telefoon</Label><Input id="c-phone" value={form.phone} onChange={(e) => update('phone', e.target.value)} className="mt-1.5" /></div>
                 </div>
-                <div><Label htmlFor="c-email">E-mail *</Label><Input id="c-email" type="email" required value={form.email} onChange={(e) => update('email', e.target.value)} className="mt-1.5" /></div>
-                <div><Label htmlFor="c-msg">Bericht *</Label><Textarea id="c-msg" required rows={5} value={form.message} onChange={(e) => update('message', e.target.value)} className="mt-1.5" /></div>
+                <div>
+                  <Label htmlFor="c-email">E-mail *</Label>
+                  <Input id="c-email" type="email" required value={form.email} onChange={(e) => update('email', e.target.value)} className={`mt-1.5 ${errorClass('email')}`} aria-invalid={!!errors.email} aria-describedby={errors.email ? 'c-email-error' : undefined} />
+                  {errors.email && <p id="c-email-error" role="alert" className="text-xs text-destructive mt-1">{errors.email}</p>}
+                </div>
+                <div>
+                  <Label htmlFor="c-msg">Bericht *</Label>
+                  <Textarea id="c-msg" required rows={5} value={form.message} onChange={(e) => update('message', e.target.value)} className={`mt-1.5 ${errorClass('message')}`} aria-invalid={!!errors.message} aria-describedby={errors.message ? 'c-msg-error' : undefined} />
+                  {errors.message && <p id="c-msg-error" role="alert" className="text-xs text-destructive mt-1">{errors.message}</p>}
+                </div>
                 <Button type="submit" disabled={loading} className="w-full bg-brand-blue hover:bg-brand-blue-dark text-white h-11">{loading ? 'Versturen...' : 'Verstuur bericht'}</Button>
               </form>
             </CardContent>
@@ -835,125 +833,6 @@ function CtaBanner({ onQuoteClick }) {
   )
 }
 
-/* ---------- FOOTER ---------- */
-function Footer() {
-  return (
-    <footer className="bg-brand-blue-dark text-white/90 pt-14 sm:pt-16 pb-8">
-      <div className="container">
-        <div className="grid sm:grid-cols-2 md:grid-cols-4 gap-8 sm:gap-10 mb-10">
-          <div>
-            <div className="flex items-center gap-3 mb-4">
-              <BrandLogo variant="badge" size={56} />
-              <div>
-                <div className="font-display text-xl font-bold">
-                  <span className="text-white">Beste</span><span className="text-brand-green-light">Fixo</span>
-                </div>
-                <div className="text-[10px] tracking-[0.28em] uppercase text-brand-green-light font-semibold">Schoonmaak</div>
-              </div>
-            </div>
-            <p className="text-sm text-white/70">{brand.description}</p>
-          </div>
-          <div>
-            <h4 className="font-display font-bold text-white mb-4">Diensten</h4>
-            <ul className="space-y-2 text-sm">
-              {SERVICES.slice(0, 6).map((s) => <li key={s.slug}><a href="#diensten" className="hover:text-brand-green-light transition-colors">{s.title}</a></li>)}
-            </ul>
-          </div>
-          <div>
-            <h4 className="font-display font-bold text-white mb-4">Bedrijf</h4>
-            <ul className="space-y-2 text-sm">
-              <li><a href="#over" className="hover:text-brand-green-light transition-colors">Over Ons</a></li>
-              <li><a href="#werkproces" className="hover:text-brand-green-light transition-colors">Werkwijze</a></li>
-              <li><a href="#reviews" className="hover:text-brand-green-light transition-colors">Reviews</a></li>
-              <li><a href="#faq" className="hover:text-brand-green-light transition-colors">FAQ</a></li>
-              <li><a href="#offerte" className="hover:text-brand-green-light transition-colors">Offerte</a></li>
-            </ul>
-          </div>
-                    <div>
-            <h4 className="font-display font-bold text-white mb-4">Contact</h4>
-            <ul className="space-y-2 text-sm">
-              <li className="flex items-center gap-2"><Phone className="h-4 w-4 shrink-0" /> <a href={`tel:${contact.phoneRaw}`}>{contact.phone}</a></li>
-              <li className="flex items-center gap-2"><Mail className="h-4 w-4 shrink-0" /> <a href={`mailto:${contact.email}`} className="break-all">{contact.email}</a></li>
-              <li className="flex items-start gap-2"><MapPin className="h-4 w-4 mt-0.5 shrink-0" /> <span>{contact.workArea}</span></li>
-            </ul>
-            <div className="flex gap-3 mt-4">
-              {brand.social?.facebook && (
-                <a href={brand.social.facebook} target="_blank" rel="noopener noreferrer" className="w-9 h-9 rounded-full bg-white/10 flex items-center justify-center hover:bg-brand-green-light transition-colors" aria-label="Facebook">
-                  <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
-                </a>
-              )}
-              {brand.social?.instagram && (
-                <a href={brand.social.instagram} target="_blank" rel="noopener noreferrer" className="w-9 h-9 rounded-full bg-white/10 flex items-center justify-center hover:bg-brand-green-light transition-colors" aria-label="Instagram">
-                  <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
-                </a>
-              )}
-            </div>
-          </div>
-        </div>
-                <div className="border-t border-white/10 pt-6 flex flex-col sm:flex-row justify-between items-center gap-3 text-sm text-white/60">
-          <div> &copy; {new Date().getFullYear()} BesteFixo Schoonmaak. KVK: {contact.kvk}. Alle rechten voorbehouden.</div>
-          <div className="flex gap-5"><a href="#" className="hover:text-white">Privacy</a><a href="#" className="hover:text-white">Algemene voorwaarden</a></div>
-        </div>
-      </div>
-    </footer>
-  )
-}
-
-/* ---------- FLOATING BUTTONS ---------- */
-function FloatingButtons() {
-  const [showTop, setShowTop] = useState(false)
-  useEffect(() => {
-    const onScroll = () => setShowTop(window.scrollY > 600)
-    window.addEventListener('scroll', onScroll); return () => window.removeEventListener('scroll', onScroll)
-  }, [])
-  return (
-    <>
-      <a
-        href={`https://wa.me/${contact.whatsappNumber}?text=${encodeURIComponent('Hallo BesteFixo, ik heb een vraag over jullie schoonmaakdiensten.')}`}
-        target="_blank" rel="noopener noreferrer"
-        aria-label="Stuur een WhatsApp bericht"
-        className="fixed bottom-5 right-5 sm:bottom-6 sm:right-6 z-40 h-13 w-13 sm:h-14 sm:w-14 rounded-full bg-[#25D366] hover:bg-[#1ebe5a] text-white flex items-center justify-center shadow-premium animate-float"
-        style={{ height: 56, width: 56 }}
-      >
-        <MessageCircle className="h-7 w-7" />
-      </a>
-      <AnimatePresence>
-        {showTop && (
-          <motion.button
-            initial={{ opacity: 0, scale: 0.6 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.6 }}
-            onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-            aria-label="Terug naar boven"
-            className="fixed bottom-[88px] right-5 sm:right-6 z-40 h-12 w-12 rounded-full bg-brand-blue hover:bg-brand-blue-dark text-white flex items-center justify-center shadow-premium"
-          >
-            <ArrowUp className="h-5 w-5" />
-          </motion.button>
-        )}
-      </AnimatePresence>
-    </>
-  )
-}
-
-function CookieBanner() {
-  const [show, setShow] = useState(false)
-  useEffect(() => {
-    try { if (!localStorage.getItem('bf-cookies')) setShow(true) } catch {}
-  }, [])
-  const accept = () => { try { localStorage.setItem('bf-cookies', '1') } catch {}; setShow(false) }
-  if (!show) return null
-  return (
-    <div className="fixed bottom-3 left-3 right-3 sm:left-6 sm:right-auto sm:max-w-md z-50">
-      <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} className="bg-white rounded-2xl shadow-premium border border-border/60 p-4 sm:p-5">
-        <div className="font-display font-bold text-brand-blue mb-1">Cookies</div>
-        <p className="text-sm text-muted-foreground mb-3 sm:mb-4">Wij gebruiken cookies om uw ervaring op onze website te verbeteren. Door verder te gaan accepteert u onze cookies.</p>
-        <div className="flex gap-2">
-          <Button onClick={accept} size="sm" className="bg-brand-blue hover:bg-brand-blue-dark text-white">Accepteren</Button>
-          <Button onClick={accept} size="sm" variant="outline">Sluiten</Button>
-        </div>
-      </motion.div>
-    </div>
-  )
-}
-
 /* ---------- APP ---------- */
 function App() {
   const scrollToQuote = () => {
@@ -961,23 +840,28 @@ function App() {
     if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' })
   }
   return (
-    <main className="min-h-screen bg-background overflow-x-hidden">
+    <>
+      <a href="#main" className="skip-link">Direct naar inhoud</a>
       <Navbar onQuoteClick={scrollToQuote} />
-      <Hero onQuoteClick={scrollToQuote} />
-      <WhyUs />
-      <About />
-      <Services onQuoteClick={scrollToQuote} />
-      <Process />
-      <Projects />
-      <Reviews />
-      <QuoteForm />
-      <FAQ />
-      <Contact />
-      <CtaBanner onQuoteClick={scrollToQuote} />
+      <main id="main" className="min-h-screen bg-background overflow-x-hidden pb-16 lg:pb-0">
+        <Hero onQuoteClick={scrollToQuote} />
+        <StatsBar />
+        <WhyUs />
+        <About />
+        <Services onQuoteClick={scrollToQuote} />
+        <Process />
+        <Projects />
+        <Reviews />
+        <QuoteForm />
+        <FAQ />
+        <Contact />
+        <CtaBanner onQuoteClick={scrollToQuote} />
+      </main>
       <Footer />
       <FloatingButtons />
+      <MobileCtaBar onQuoteClick={scrollToQuote} />
       <CookieBanner />
-    </main>
+    </>
   )
 }
 
